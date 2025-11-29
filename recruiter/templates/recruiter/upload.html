@@ -1,0 +1,124 @@
+{% extends "recruiter/base.html" %}
+{% load static %}
+
+{% block title %}Upload CVs - AI CV Screening{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="glass-card" style="animation: fadeInUp 0.8s ease-out;">
+            {% if error %}
+                <div class="alert-custom">
+                    <i class="fas fa-exclamation-circle me-2"></i>
+                    {{ error }}
+                </div>
+            {% endif %}
+
+            <form method="POST" enctype="multipart/form-data" id="uploadForm">
+                {% csrf_token %}
+                
+                <!-- Job Title -->
+                <div class="mb-4">
+                    <label for="job_title" class="form-label">
+                        <i class="fas fa-briefcase me-2"></i>Job Title
+                    </label>
+                    <input 
+                        type="text" 
+                        class="form-control" 
+                        id="job_title" 
+                        name="job_title" 
+                        placeholder="e.g., Senior Full Stack Developer"
+                        required
+                    >
+                </div>
+
+                <!-- Job Requirements -->
+                <div class="mb-4">
+                    <label for="job_requirements" class="form-label">
+                        <i class="fas fa-list-check me-2"></i>Job Requirements
+                    </label>
+                    <textarea 
+                        class="form-control" 
+                        id="job_requirements" 
+                        name="job_requirements" 
+                        placeholder="Enter the key requirements, skills, and qualifications for this position..."
+                        required
+                    ></textarea>
+                </div>
+
+                <!-- File Upload -->
+                <div class="mb-4">
+                    <label class="form-label">
+                        <i class="fas fa-file-pdf me-2"></i>Upload Candidate CVs (1-5 files)
+                    </label>
+                    <div class="file-upload-wrapper">
+                        <input 
+                            type="file" 
+                            name="cvs" 
+                            id="cvs" 
+                            multiple 
+                            accept=".pdf"
+                            required
+                        >
+                        <div class="file-upload-icon">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                        </div>
+                        <div class="file-upload-text">
+                            <strong>Click to upload</strong> or drag and drop
+                            <br>
+                            <small style="opacity: 0.8;">PDF files only (1-5 files)</small>
+                        </div>
+                        <div id="fileList" class="mt-3"></div>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="text-center mt-5">
+                    <button type="submit" class="btn-gradient">
+                        <i class="fas fa-robot me-2"></i>Analyze with AI
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/upload.css' %}">
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const fileInput = document.getElementById('cvs');
+    const fileList = document.getElementById('fileList');
+
+    fileInput.addEventListener('change', function(e) {
+        fileList.innerHTML = '';
+        const files = Array.from(e.target.files);
+        
+        if (files.length > 0) {
+            files.forEach((file, index) => {
+                const fileSize = (file.size / 1024).toFixed(2);
+                const fileItem = document.createElement('div');
+                fileItem.className = 'file-list-item';
+                fileItem.innerHTML = `
+                    <span>
+                        <i class="fas fa-file-pdf"></i>
+                        ${file.name}
+                    </span>
+                    <span class="file-size">${fileSize} KB</span>
+                `;
+                fileList.appendChild(fileItem);
+            });
+        }
+    });
+
+    // Form submission animation
+    document.getElementById('uploadForm').addEventListener('submit', function(e) {
+        const btn = this.querySelector('.btn-gradient');
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Processing...';
+        btn.disabled = true;
+    });
+</script>
+{% endblock %}

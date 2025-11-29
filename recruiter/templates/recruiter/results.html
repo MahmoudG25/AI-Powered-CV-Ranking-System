@@ -1,0 +1,169 @@
+{% extends "recruiter/base.html" %}
+{% load static %}
+
+{% block title %}Results - AI CV Screening{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <!-- Job Info Section -->
+        <div class="glass-card mb-4" style="animation: fadeInDown 0.6s ease-out;">
+            <h2 class="section-title">
+                <i class="fas fa-briefcase me-2"></i>Job Position
+            </h2>
+            <h3 class="job-title">{{ job_title }}</h3>
+            <div class="job-requirements">
+                <strong><i class="fas fa-list-check me-2"></i>Requirements:</strong>
+                <p>{{ job_requirements|linebreaks }}</p>
+            </div>
+        </div>
+
+        <!-- Candidate Rankings -->
+        <div class="glass-card mb-4" style="animation: fadeInUp 0.8s ease-out;">
+            <h2 class="section-title mb-4">
+                <i class="fas fa-trophy me-2"></i>Candidate Rankings
+            </h2>
+
+            <div class="row">
+                {% for rank in ai_result.ranking %}
+                    {% with cid=rank.id %}
+                        {% for c in ai_result.candidates %}
+                            {% if c.id == cid %}
+                                <div class="col-12 mb-4">
+                                    <div class="candidate-card" style="animation: slideIn 0.6s ease-out {{ forloop.counter0|add:'0.2' }}s backwards;">
+                                        <div class="candidate-header">
+                                            <div class="candidate-info">
+                                                <div class="rank-badge rank-{{ forloop.parentloop.counter }}">
+                                                    #{{ forloop.parentloop.counter }}
+                                                </div>
+                                                <div>
+                                                    <h4 class="candidate-name">
+                                                        <i class="fas fa-user me-2"></i>
+                                                        {{ c.candidate_name|default:"Candidate" }}
+                                                    </h4>
+                                                    {% if c.candidate_email %}
+                                                        <p class="candidate-email">
+                                                            <i class="fas fa-envelope me-2"></i>
+                                                            {{ c.candidate_email }}
+                                                        </p>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                            <div class="score-badge" data-score="{{ c.fit_score }}">
+                                                <div class="score-number">{{ c.fit_score }}</div>
+                                                <div class="score-label">Fit Score</div>
+                                            </div>
+                                        </div>
+
+                                        <div class="ranking-reason">
+                                            <i class="fas fa-lightbulb me-2"></i>
+                                            <strong>Why this rank:</strong> {{ rank.reason }}
+                                        </div>
+
+                                        <div class="candidate-details">
+                                            <div class="row">
+                                                <div class="col-md-6 mb-3">
+                                                    <div class="detail-section strengths-section">
+                                                        <h5>
+                                                            <i class="fas fa-check-circle me-2"></i>Strengths
+                                                        </h5>
+                                                        <ul>
+                                                            {% for s in c.strengths %}
+                                                                <li>{{ s }}</li>
+                                                            {% endfor %}
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 mb-3">
+                                                    <div class="detail-section gaps-section">
+                                                        <h5>
+                                                            <i class="fas fa-exclamation-triangle me-2"></i>Gaps
+                                                        </h5>
+                                                        <ul>
+                                                            {% for g in c.gaps %}
+                                                                <li>{{ g }}</li>
+                                                            {% empty %}
+                                                                <li>No significant gaps identified</li>
+                                                            {% endfor %}
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="summary-section">
+                                                <h5>
+                                                    <i class="fas fa-file-alt me-2"></i>Summary
+                                                </h5>
+                                                <p>{{ c.summary }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    {% endwith %}
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Email Section -->
+        <div class="glass-card" style="animation: fadeInUp 1s ease-out;">
+            <h2 class="section-title mb-4">
+                <i class="fas fa-paper-plane me-2"></i>Email to Top Candidate
+            </h2>
+            <div class="email-preview">
+                <div class="email-subject">
+                    <strong>Subject:</strong> {{ ai_result.email.subject }}
+                </div>
+                <div class="email-body">
+                    <pre>{{ ai_result.email.body }}</pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- Back Button -->
+        <div class="text-center mt-4 mb-5">
+            <a href="{% url 'recruiter:upload' %}" class="btn-gradient">
+                <i class="fas fa-arrow-left me-2"></i>Evaluate More Candidates
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/results.css' %}">
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Add dynamic colors to score badges based on score
+    document.querySelectorAll('.score-badge[data-score]').forEach(badge => {
+        const score = parseInt(badge.getAttribute('data-score'));
+        let color;
+        
+        if (score >= 80) {
+            color = 'rgba(74, 222, 128, 0.5)'; // Green
+        } else if (score >= 60) {
+            color = 'rgba(251, 191, 36, 0.5)'; // Yellow
+        } else {
+            color = 'rgba(248, 113, 113, 0.5)'; // Red
+        }
+        
+        badge.style.background = color;
+    });
+
+    // Smooth scroll animation
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
+</script>
+{% endblock %}
