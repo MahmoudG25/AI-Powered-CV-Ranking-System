@@ -15,6 +15,10 @@ def upload_view(request):
 
         files = request.FILES.getlist("cvs")
 
+        if len(files) < 1 or len(files) > 5:
+            return render(request, "recruiter/upload.html", { "error": "Please upload between 1 and 5 CVs." })
+            
+
         saved_cvs = []
         for file in files:
             text = extract_text_from_file(file)
@@ -34,7 +38,7 @@ def upload_view(request):
             candidates=saved_cvs
         )
 
-        print("AI RESULT:", ai_result, type(ai_result))  # مهم جدًا تشوفه في التيرمنال
+        print("AI RESULT:", ai_result, type(ai_result))  
 
         return render(request, "recruiter/results.html", {
             "job_title": job_title,
@@ -43,7 +47,6 @@ def upload_view(request):
         })
 
     return render(request, "recruiter/upload.html")
-
 
 
 

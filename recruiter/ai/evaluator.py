@@ -10,13 +10,7 @@ client = OpenAI(
 )
 
 def evaluate_candidates(job_title: str, job_requirements: str, candidates: List[CandidateCV]):
-    """
-    بياخد بيانات الوظيفة + قائمة بالـ CVs
-    ويرجع:
-    - بيانات كل CV بعد التقييم
-    - ترتيب (ranking)
-    - إيميل جاهز لأحسن مرشح
-    """
+
 
     cvs_data = []
     for cv in candidates:
@@ -24,7 +18,6 @@ def evaluate_candidates(job_title: str, job_requirements: str, candidates: List[
             "id": cv.id,
             "existing_name": cv.candidate_name or "",
             "existing_email": cv.candidate_email or "",
-            # لو الـ CV طويل قوي، نقصه شوية عشان الـ tokens
             "text": (cv.full_text or "")[:15000],
         })
 
@@ -103,15 +96,13 @@ Here is the CVs data as JSON:
 
     raw_output = response.choices[0].message.content
 
-    # ننضّف الـ output لو الموديل رجّع ```json ... ```
+
     cleaned = raw_output.strip()
 
     if cleaned.startswith("```"):
         lines = cleaned.splitlines()
-        # شيل أول سطر لو هو ``` أو ```json
         if lines[0].startswith("```"):
             lines = lines[1:]
-        # شيل آخر سطر لو هو ```
         if lines and lines[-1].startswith("```"):
             lines = lines[:-1]
         cleaned = "\n".join(lines).strip()
@@ -119,7 +110,6 @@ Here is the CVs data as JSON:
     try:
         data = json.loads(cleaned)
     except json.JSONDecodeError:
-        # في حالة لسه في مشكلة، نطبع اللي رجع للمساعدة في الديباج
         raise ValueError(f"Model did not return valid JSON. Raw output:\n{raw_output}")
 
     return data
