@@ -43,8 +43,8 @@ Candidate rankings with color-coded scores and detailed analysis
 
 1. **Clone the repository**
    ```bash
-   git clone <repository-url>
-   cd lab
+   git clone <https://github.com/MahmoudG25/AI-Powered-CV-Ranking-System.git>
+   cd AI-Powered-CV-Ranking-System            
    ```
 
 2. **Create virtual environment**
@@ -106,7 +106,7 @@ Candidate rankings with color-coded scores and detailed analysis
 ## Project Structure
 
 ```
-lab/
+AI-Powered-CV-Ranking-System/
 ├── core/                      # Django project settings
 │   ├── settings.py           # Main settings
 │   └── urls.py               # Root URL configuration
@@ -219,7 +219,7 @@ This project is licensed under the MIT License.
 
 For issues and questions:
 - Open an issue on GitHub
-- Contact: [your-email@example.com]
+- Contact: [mahmoud.gado2002@gmail.com]
 
 ---
 

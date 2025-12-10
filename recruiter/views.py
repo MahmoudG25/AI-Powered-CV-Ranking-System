@@ -3,8 +3,6 @@ from .models import CandidateCV
 from .ai.evaluator import evaluate_candidates
 import PyPDF2
 import os
-
-
 from django.http import HttpResponse
 from .ai.evaluator import evaluate_candidates
 
