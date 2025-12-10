@@ -43,7 +43,7 @@ Candidate rankings with color-coded scores and detailed analysis
 
 1. **Clone the repository**
    ```bash
-   git clone <https://github.com/MahmoudG25/AI-Powered-CV-Ranking-System.git>
+   git clone https://github.com/MahmoudG25/AI-Powered-CV-Ranking-System.git
    cd AI-Powered-CV-Ranking-System            
    ```
 
